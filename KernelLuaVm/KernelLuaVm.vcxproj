@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7FAC530A-63E4-4C27-86E1-B318205E4C0E}</ProjectGuid>
+    <TemplateGuid>{1bc93793-694f-48fe-9372-81e2b05556fd}</TemplateGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration>Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+    <RootNamespace>KernelLuaVm</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)..\LuaLib;$(IncludePath);$(KMDF_INC_PATH)$(KMDF_VER_PATH)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)..\LuaLib;$(IncludePath);$(KMDF_INC_PATH)$(KMDF_VER_PATH)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)LuaLib;$(IncludePath);$(KMDF_INC_PATH)$(KMDF_VER_PATH)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <IncludePath>$(SolutionDir)LuaLib;$(IncludePath);$(KMDF_INC_PATH)$(KMDF_VER_PATH)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_DEBUG;_X86_=1;i386=1;STD_CALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_DEBUG;_WIN64;_AMD64_;AMD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Oi- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <FilesToPackage Include="$(TargetPath)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LuaLib\LuaLib.vcxproj">
+      <Project>{71fc9fc1-f46f-41d4-913e-07298d6e8220}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="crt\io.c" />
+    <ClCompile Include="crt\libmd\acos.c" />
+    <ClCompile Include="crt\libmd\acosh.c" />
+    <ClCompile Include="crt\libmd\asin.c" />
+    <ClCompile Include="crt\libmd\asinh.c" />
+    <ClCompile Include="crt\libmd\atan.c" />
+    <ClCompile Include="crt\libmd\atan2.c" />
+    <ClCompile Include="crt\libmd\atanh.c" />
+    <ClCompile Include="crt\libmd\ceil.c" />
+    <ClCompile Include="crt\libmd\copysign.c" />
+    <ClCompile Include="crt\libmd\cos.c" />
+    <ClCompile Include="crt\libmd\cosh.c" />
+    <ClCompile Include="crt\libmd\erf.c" />
+    <ClCompile Include="crt\libmd\exp.c" />
+    <ClCompile Include="crt\libmd\expm1.c" />
+    <ClCompile Include="crt\libmd\fabs.c" />
+    <ClCompile Include="crt\libmd\floor.c" />
+    <ClCompile Include="crt\libmd\fmod.c" />
+    <ClCompile Include="crt\libmd\fpclassify.c" />
+    <ClCompile Include="crt\libmd\frexp.c" />
+    <ClCompile Include="crt\libmd\ldexp.c" />
+    <ClCompile Include="crt\libmd\lgamma.c" />
+    <ClCompile Include="crt\libmd\log.c" />
+    <ClCompile Include="crt\libmd\log10.c" />
+    <ClCompile Include="crt\libmd\log1p.c" />
+    <ClCompile Include="crt\libmd\modf.c" />
+    <ClCompile Include="crt\libmd\nearbyint.c" />
+    <ClCompile Include="crt\libmd\pow.c" />
+    <ClCompile Include="crt\libmd\rint.c" />
+    <ClCompile Include="crt\libmd\scalbn.c" />
+    <ClCompile Include="crt\libmd\signbit.c" />
+    <ClCompile Include="crt\libmd\sin.c" />
+    <ClCompile Include="crt\libmd\sinh.c" />
+    <ClCompile Include="crt\libmd\sqrt.c" />
+    <ClCompile Include="crt\libmd\tan.c" />
+    <ClCompile Include="crt\libmd\tanh.c" />
+    <ClCompile Include="crt\libmd\tgamma.c" />
+    <ClCompile Include="crt\libmd\trunc.c" />
+    <ClCompile Include="crt\libmd\_fltused.c" />
+    <ClCompile Include="crt\libmd\__cos.c" />
+    <ClCompile Include="crt\libmd\__expo2.c" />
+    <ClCompile Include="crt\libmd\__rem_pio2.c" />
+    <ClCompile Include="crt\libmd\__rem_pio2_large.c" />
+    <ClCompile Include="crt\libmd\__sin.c" />
+    <ClCompile Include="crt\libmd\__tan.c" />
+    <ClCompile Include="crt\memory.cpp" />
+    <ClCompile Include="crt\misc.c" />
+    <ClCompile Include="lua\api.cpp" />
+    <ClCompile Include="lua\native_function.cpp" />
+    <ClCompile Include="lua\state.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="crt\string.c">
+      <FileType>CppCode</FileType>
+    </ClCompile>
+    <ClInclude Include="crt\crt.h" />
+    <ClInclude Include="crt\libmd.h" />
+    <ClInclude Include="crt\stdint.h" />
+    <ClInclude Include="driver_io.hpp" />
+    <ClInclude Include="logger.hpp" />
+    <ClInclude Include="lua\api.hpp" />
+    <ClInclude Include="lua\native_function.hpp" />
+    <ClInclude Include="lua\state.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="runtime.lua" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

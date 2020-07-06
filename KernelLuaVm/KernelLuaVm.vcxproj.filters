@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="crt\libmd\__cos.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\__expo2.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\__rem_pio2.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\__rem_pio2_large.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\__sin.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\__tan.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\_fltused.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\acos.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\acosh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\asin.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\asinh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\atan.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\atan2.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\atanh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\ceil.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\copysign.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\cos.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\cosh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\erf.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\exp.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\expm1.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\fabs.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\floor.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\fmod.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\fpclassify.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\frexp.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\ldexp.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\lgamma.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\log.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\log1p.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\log10.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\modf.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\nearbyint.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\pow.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\rint.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\scalbn.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\signbit.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\sin.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\sinh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\sqrt.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\tan.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\tanh.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\tgamma.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\libmd\trunc.c">
+      <Filter>crt\libmd</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\io.c">
+      <Filter>crt\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\misc.c">
+      <Filter>crt\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\string.c">
+      <Filter>crt\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\state.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\memory.cpp">
+      <Filter>crt\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\native_function.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\api.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="crt">
+      <UniqueIdentifier>{34fc80ff-2c2f-48ce-bc9d-e58bed8bd8c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="crt\libmd">
+      <UniqueIdentifier>{d020440f-50cc-4ecd-bb74-30ed1469974b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="crt\misc">
+      <UniqueIdentifier>{51d27d14-edb0-4590-bb60-8e20b89d3a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{c93e1f28-6e3d-4491-9813-a370a623d96b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="crt\crt.h">
+      <Filter>crt</Filter>
+    </ClInclude>
+    <ClInclude Include="crt\libmd.h">
+      <Filter>crt\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="crt\stdint.h">
+      <Filter>crt\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.hpp" />
+    <ClInclude Include="lua\state.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\native_function.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="driver_io.hpp" />
+    <ClInclude Include="lua\api.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="runtime.lua" />
+  </ItemGroup>
+</Project>

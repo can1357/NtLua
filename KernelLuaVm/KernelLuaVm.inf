@@ -1,0 +1,86 @@
+;
+; KernelLuaVm.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=KernelLuaVm.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+KernelLuaVm_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KernelLuaVm.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%KernelLuaVm.DeviceDesc%=KernelLuaVm_Device, Root\KernelLuaVm ; TODO: edit hw-id
+
+[KernelLuaVm_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+KernelLuaVm.sys
+
+;-------------- Service installation
+[KernelLuaVm_Device.NT.Services]
+AddService = KernelLuaVm,%SPSVCINST_ASSOCSERVICE%, KernelLuaVm_Service_Inst
+
+; -------------- KernelLuaVm driver install sections
+[KernelLuaVm_Service_Inst]
+DisplayName    = %KernelLuaVm.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\KernelLuaVm.sys
+
+;
+;--- KernelLuaVm_Device Coinstaller installation ------
+;
+
+[KernelLuaVm_Device.NT.CoInstallers]
+AddReg=KernelLuaVm_Device_CoInstaller_AddReg
+CopyFiles=KernelLuaVm_Device_CoInstaller_CopyFiles
+
+[KernelLuaVm_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[KernelLuaVm_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[KernelLuaVm_Device.NT.Wdf]
+KmdfService =  KernelLuaVm, KernelLuaVm_wdfsect
+[KernelLuaVm_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "KernelLuaVm Installation Disk"
+KernelLuaVm.DeviceDesc = "KernelLuaVm Device"
+KernelLuaVm.SVCDESC = "KernelLuaVm Service"

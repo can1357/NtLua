@@ -25,8 +25,9 @@ Well you've come to the right place to run a scripting language at `DPC_LEVEL`!
 
 ## Supports:
 - Structured exception handling
-- Automatic exporting of entire kernel binaries
 - Garbage collected temporaries
+- UNICODE_STRING/ANSI_STRING via `unicode_string(str) and ansi_string(str)`
+- Automatic importing of entire kernel images
 
 ## Under development:
 - File importing via UM console
@@ -35,3 +36,6 @@ Well you've come to the right place to run a scripting language at `DPC_LEVEL`!
 - Multi-thread support
 - HIGH_LEVEL IRQL support
 - Other fun stuff you are considering to contribute.
+
+----------
+## If you have any useful scripts, feel free to send a PR to include it in the Repo under /scripts!

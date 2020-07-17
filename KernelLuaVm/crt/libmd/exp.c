@@ -132,3 +132,8 @@ double exp(double x)
 		return y;
 	return scalbn(y, k);
 }
+
+float expf(float f)
+{
+	return exp(f);
+}

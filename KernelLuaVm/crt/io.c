@@ -62,3 +62,23 @@ int fclose( FILE* stream )
 {
     return 1;
 }
+
+#include <stdarg.h>
+
+extern "C" __declspec(dllimport) int _vsnprintf( char* dest, size_t count, const char* fmt, va_list args );
+
+int fprintf( FILE* stream, const char* fmt, ... )
+{
+    va_list args;
+    va_start( args, fmt );
+    char buf[512] = "";
+    auto n = _vsnprintf( buf, sizeof( buf ), fmt, args );
+    if ( n >= sizeof(buf) )
+    {
+        // todo: allocate things
+        __debugbreak();
+    }
+    va_end( args );
+    fwrite( buf, n, 1, stream );
+    return 1;
+}

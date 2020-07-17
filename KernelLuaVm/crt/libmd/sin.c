@@ -76,3 +76,8 @@ double sin(double x)
 		return -__cos(y[0], y[1]);
 	}
 }
+
+float sinf(float f)
+{
+	return sin(f);
+}

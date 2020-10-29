@@ -58,11 +58,18 @@ static uint64_t readfsbase() { return _readfsbase_u64(); }
 
 static void* read_svirt( const void* src, size_t n )
 {
+    static auto _MmCopyMemory = [ ] ()
+    {
+        UNICODE_STRING name = RTL_CONSTANT_STRING( L"MmCopyMemory" );
+        return ( decltype( &MmCopyMemory ) ) MmGetSystemRoutineAddress( &name );
+    }();
+    if ( !_MmCopyMemory ) return nullptr;
+
     void* buffer = malloc( n );
     if ( !buffer ) return nullptr;
 
     size_t counter = 0;
-    MmCopyMemory(
+    _MmCopyMemory(
         buffer,
         *( MM_COPY_ADDRESS* ) &src,
         n,
@@ -76,11 +83,18 @@ static void* read_svirt( const void* src, size_t n )
 }
 static void* read_sphys( uint64_t src, size_t n )
 {
+    static auto _MmCopyMemory = [ ] ()
+    {
+        UNICODE_STRING name = RTL_CONSTANT_STRING( L"MmCopyMemory" );
+        return ( decltype( &MmCopyMemory ) ) MmGetSystemRoutineAddress( &name );
+    }();
+    if ( !_MmCopyMemory ) return nullptr;
+
     void* buffer = malloc( n );
     if ( !buffer ) return nullptr;
 
     size_t counter = 0;
-    MmCopyMemory(
+    _MmCopyMemory(
         buffer,
         *( MM_COPY_ADDRESS* ) &src,
         n,

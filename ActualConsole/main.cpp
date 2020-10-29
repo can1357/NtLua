@@ -42,6 +42,19 @@ int main()
             buffer += "\n" + buffer2;
         }
 
+        // If command starts with clear, clear console.
+        //
+        if ( buffer.starts_with( "clear" ) )
+        {
+            system( "cls" );
+            buffer.erase( buffer.begin(), buffer.begin() + 5 );
+        }
+
+        // If command starts with exit, exit console.
+        //
+        if ( buffer.starts_with( "exit" ) )
+            exit( 0 );
+
         // Send IOCTL.
         //
         ntlua_result result = { 

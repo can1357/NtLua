@@ -42,18 +42,17 @@ int main()
             buffer += "\n" + buffer2;
         }
 
-        // If command starts with clear, clear console.
+        // Handle special commands:
         //
-        if ( buffer.starts_with( "clear" ) )
+        if ( buffer == "clear" )
         {
             system( "cls" );
-            buffer.erase( buffer.begin(), buffer.begin() + 5 );
+            continue;
         }
-
-        // If command starts with exit, exit console.
-        //
-        if ( buffer.starts_with( "exit" ) )
-            exit( 0 );
+        else if ( buffer == "cmd" )
+            return system( "cmd" );
+        else if ( buffer == "exit" )
+            return 0;
 
         // Send IOCTL.
         //

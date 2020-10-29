@@ -33,6 +33,11 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
         //
         if ( input && input_length && input[ input_length - 1 ] == 0x0 )
         {
+            // Reset logger buffers.
+            //
+            logger::errors.reset();
+            logger::logs.reset();
+
             // Execute the code in the buffer.
             //
             lua::execute( L, input, true );
@@ -49,7 +54,7 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
                 // Allocate user-mode memory to hold this buffer.
                 //
                 void* region = nullptr;
-                size_t size = buf.iterator;
+                size_t size = buf.iterator + 1;
                 ZwAllocateVirtualMemory( NtCurrentProcess(), ( void** ) &region, 0, &size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
                 
                 // Copy the buffer if allocation was succesful.
@@ -82,11 +87,6 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
                     result->outputs = export_buffer( logger::logs );
                 irp->IoStatus.Information = sizeof( ntlua_result );
             }
-
-            // Reset logger buffers.
-            //
-            logger::errors.reset();
-            logger::logs.reset();
         }
 
         // Declare success and return.

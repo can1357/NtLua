@@ -31,6 +31,68 @@ static void writecr3( uint64_t value ) { return __writecr3( value ); }
 static void writecr4( uint64_t value ) { return __writecr4( value ); }
 static void writecr8( uint64_t value ) { return __writecr8( value ); }
 
+static uint64_t readdr0() { return __readdr(0); }
+static uint64_t readdr1() { return __readdr(1); }
+static uint64_t readdr2() { return __readdr(2); }
+static uint64_t readdr3() { return __readdr(3); }
+static uint64_t readdr6() { return __readdr(6); }
+static uint64_t readdr7() { return __readdr(7); }
+static void writedr0( uint64_t value ) { return __writedr( 0, value ); }
+static void writedr1( uint64_t value ) { return __writedr( 1, value ); }
+static void writedr2( uint64_t value ) { return __writedr( 2, value ); }
+static void writedr3( uint64_t value ) { return __writedr( 3, value ); }
+static void writedr6( uint64_t value ) { return __writedr( 6, value ); }
+static void writedr7( uint64_t value ) { return __writedr( 7, value ); }
+
+static uint8_t inbyte( uint16_t port ) { return __inbyte( port ); }
+static uint16_t inword( uint16_t port ) { return __inword( port ); }
+static uint32_t indword( uint16_t port ) { return __indword( port ); }
+static void outbyte( uint16_t port, uint8_t value ) { return __outbyte( port, value ); }
+static void outword( uint16_t port, uint16_t value ) { return __outword( port, value ); }
+static void outdword( uint16_t port, uint32_t value ) { return __outdword( port, value ); }
+
+static uint64_t readtsc() { return __rdtsc(); }
+static uint64_t readpmc( uint32_t pmc ) { return __readpmc( pmc ); }
+static uint64_t readgsbase() { return _readgsbase_u64(); }
+static uint64_t readfsbase() { return _readfsbase_u64(); }
+
+static void* read_svirt( const void* src, size_t n )
+{
+    void* buffer = malloc( n );
+    if ( !buffer ) return nullptr;
+
+    size_t counter = 0;
+    MmCopyMemory(
+        buffer,
+        *( MM_COPY_ADDRESS* ) &src,
+        n,
+        MM_COPY_MEMORY_VIRTUAL,
+        &counter
+    );
+    if ( counter == n )
+        return buffer;
+    free( buffer );
+    return nullptr;
+}
+static void* read_sphys( uint64_t src, size_t n )
+{
+    void* buffer = malloc( n );
+    if ( !buffer ) return nullptr;
+
+    size_t counter = 0;
+    MmCopyMemory(
+        buffer,
+        *( MM_COPY_ADDRESS* ) &src,
+        n,
+        MM_COPY_MEMORY_PHYSICAL,
+        &counter
+    );
+    if ( counter == n )
+        return buffer;
+    free( buffer );
+    return nullptr;
+}
+
 // Creates a table that containes every exported address in the given image.
 //
 static void export_all( lua_State* L, uint64_t image_address )
@@ -132,6 +194,35 @@ void lua::expose_api( lua_State* L )
     export_func( L, "writecr3", &writecr3 );
     export_func( L, "writecr4", &writecr4 );
     export_func( L, "writecr8", &writecr8 );
+
+    export_func( L, "readdr0", &readdr0 );
+    export_func( L, "readdr1", &readdr1 );
+    export_func( L, "readdr2", &readdr2 );
+    export_func( L, "readdr3", &readdr3 );
+    export_func( L, "readdr6", &readdr6 );
+    export_func( L, "readdr7", &readdr7 );
+    export_func( L, "writedr0", &writedr0 );
+    export_func( L, "writedr1", &writedr1 );
+    export_func( L, "writedr2", &writedr2 );
+    export_func( L, "writedr3", &writedr3 );
+    export_func( L, "writedr6", &writedr6 );
+    export_func( L, "writedr7", &writedr7 );
+
+    export_func( L, "inbyte", &inbyte );
+    export_func( L, "inword", &inword );
+    export_func( L, "indword", &indword );
+
+    export_func( L, "outbyte", &outbyte );
+    export_func( L, "outword", &outword );
+    export_func( L, "outdword", &outdword );
+
+    export_func( L, "readtsc", &readtsc );
+    export_func( L, "readpmc", &readpmc );
+    export_func( L, "readgsbase", &readgsbase );
+    export_func( L, "readfsbase", &readfsbase );
+
+    export_func( L, "read_sphys", &read_sphys );
+    export_func( L, "read_svirt", &read_svirt );
 
     // Export misc. functions.
     //

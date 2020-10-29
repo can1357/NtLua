@@ -2,12 +2,12 @@
 
 __declspec( restrict ) void* malloc( size_t n )
 {
-	return ExAllocatePoolWithTag( NonPagedPool, n, 'NLUA' );
+	return ExAllocatePool( NonPagedPool, n );
 }
 
 void free( void* p )
 {
-	if ( p ) ExFreePoolWithTag( p, 'NLUA' );
+	if ( p ) ExFreePool( p );
 }
 
 void* __cdecl operator new( size_t n )

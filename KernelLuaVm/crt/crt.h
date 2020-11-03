@@ -49,7 +49,7 @@ extern "C"
 	int ispunct( int c );
 	__declspec( dllimport ) int sscanf_s( const char* buffer, const char* format, ... ); // @ ntoskrnl.lib
 	__declspec( dllimport ) int sprintf_s( char* buffer, size_t sizeOfBuffer, const char* format, ... ); // @ ntoskrnl.lib
-	double strtod( char* str, char** endptr );
+	double strtod( const char* str, const char** endptr );
 	char* strpbrk( const char* s1, const char* s2 );
 	int strcoll( const char* a, const char* b );
 
@@ -67,6 +67,7 @@ extern "C"
     int ferror( FILE* stream );
     int feof( FILE* stream );
     int fclose( FILE* stream );
+    int fprintf( FILE* stream, const char* fmt, ... );
 
     // Misc. functions.
     //

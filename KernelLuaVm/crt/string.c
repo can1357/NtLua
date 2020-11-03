@@ -34,12 +34,18 @@ int ispunct( int c )
 	return 0;
 }
 
-double strtod( char* str, char** endptr )
+double strtod( const char* str, const char** endptr )
 {
 	double v = 0;
 	if ( sscanf_s( str, "%lf", &v ) && endptr )
 		*endptr = str + strlen( str );
 	return v;
+}
+
+double atof( const char* str )
+{
+	const char* endptr = 0;
+	return strtod( str, &endptr );
 }
 
 char* strpbrk( const char* s1, const char* s2 )

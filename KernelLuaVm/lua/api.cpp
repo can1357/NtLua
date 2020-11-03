@@ -56,13 +56,15 @@ static uint64_t readpmc( uint32_t pmc ) { return __readpmc( pmc ); }
 static uint64_t readgsbase() { return _readgsbase_u64(); }
 static uint64_t readfsbase() { return _readfsbase_u64(); }
 
+
+static auto _MmCopyMemory = [ ] ()
+{
+    UNICODE_STRING name = RTL_CONSTANT_STRING( L"MmCopyMemory" );
+    return ( decltype( &MmCopyMemory ) ) MmGetSystemRoutineAddress( &name );
+}();
+
 static void* read_svirt( const void* src, size_t n )
 {
-    static auto _MmCopyMemory = [ ] ()
-    {
-        UNICODE_STRING name = RTL_CONSTANT_STRING( L"MmCopyMemory" );
-        return ( decltype( &MmCopyMemory ) ) MmGetSystemRoutineAddress( &name );
-    }();
     if ( !_MmCopyMemory ) return nullptr;
 
     void* buffer = malloc( n );
@@ -105,6 +107,21 @@ static void* read_sphys( uint64_t src, size_t n )
         return buffer;
     free( buffer );
     return nullptr;
+}
+
+template<size_t N>
+static uint64_t read_pn( uint64_t p ) 
+{ 
+    uint64_t v = 0xFFFFFFFFFFFFFFFF;
+    size_t counter = 0;
+    _MmCopyMemory(
+        &v,
+        *( MM_COPY_ADDRESS* ) &p,
+        N,
+        MM_COPY_MEMORY_PHYSICAL,
+        &counter
+    );
+    return v; 
 }
 
 // Creates a table that containes every exported address in the given image.
@@ -235,8 +252,19 @@ void lua::expose_api( lua_State* L )
     export_func( L, "readgsbase", &readgsbase );
     export_func( L, "readfsbase", &readfsbase );
 
-    export_func( L, "read_sphys", &read_sphys );
-    export_func( L, "read_svirt", &read_svirt );
+    // Export simpler helpers.
+    //
+    export_func( L, "readps", &read_sphys );
+    export_func( L, "readvs", &read_svirt );
+
+    export_func( L, "readp1", &read_pn<1> );
+    export_func( L, "readp2", &read_pn<2> );
+    export_func( L, "readp4", &read_pn<4> );
+    export_func( L, "readp8", &read_pn<8> );
+
+    export_func( L, "attach_process", &attach_process );
+    export_func( L, "attach_pid", &attach_pid );
+    export_func( L, "detach", &detach );
 
     // Export misc. functions.
     //

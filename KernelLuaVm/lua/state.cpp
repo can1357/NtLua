@@ -104,6 +104,10 @@ namespace lua
         size_t len = strlen( code );
         if ( !len ) return;
 
+        // Reset the Lua stack.
+        //
+        lua_settop( L, 0 );
+
         // Guard against Lua panic.
         //
         if ( setjmp( lua::get_context( L )->panic_jump ) == 0 )

@@ -1,6 +1,10 @@
 #pragma once
 #include <string.h>
 
+extern "C" {
+    __declspec( dllimport ) int sprintf_s( char* buffer, size_t sizeOfBuffer, const char* format, ... );
+};
+
 // Basic logger implementation.
 //
 namespace logger
@@ -12,13 +16,22 @@ namespace logger
         char raw[ buffer_length ];
         size_t iterator = 0;
 
-        void append( const void* ptr, size_t n )
+        template<typename... T>
+        int append( const char* format, T... args )
         {
-            if ( ( iterator + n ) < buffer_length )
-            {
-                memcpy( raw + iterator, ptr, n );
-                iterator += n;
-            }
+            int result = sprintf_s( &raw[ iterator ], buffer_length - iterator, format, args... );
+            if ( result > 0 )
+                iterator += result;
+            return result;
+        }
+
+        int append_raw( const char* data, size_t len )
+        {
+            if ( len > ( buffer_length - iterator ) )
+                len = buffer_length - iterator;
+            memcpy( &raw[ iterator ], data, len );
+            iterator += len;
+            return len;
         }
 
         void reset()
@@ -30,20 +43,6 @@ namespace logger
     inline string_buffer logs = {};
     inline string_buffer errors = {};
 
-    template<typename... T>
-    static auto error( const char* format, T... args )
-    {
-        char buffer[ 512 ];
-        size_t n = sprintf_s( buffer, 512, format, args... );
-        errors.append( buffer, n );
-        return n;
-    }
-    template<typename... T>
-    static auto log( const char* format, T... args )
-    {
-        char buffer[ 512 ];
-        size_t n = sprintf_s( buffer, 512, format, args... );
-        logs.append( buffer, n );
-        return n;
-    }
+    template<typename... T> inline int error( const char* format, T... args ) { return errors.append( format, args... ); }
+    template<typename... T> inline int log( const char* format, T... args ) { return logs.append( format, args... ); }
 };

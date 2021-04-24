@@ -8,5 +8,5 @@ void abort()
 
 char* getenv()
 {
-	return "virtual://";
+	return ( char* ) "virtual://";
 }

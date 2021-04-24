@@ -128,6 +128,7 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
                     __try
                     {
                         memcpy( region, buf.raw, buf.iterator );
+                        region[ buf.iterator ] = 0;
                     }
                     __except ( 1 )
                     {

@@ -8,7 +8,29 @@
 
 // Global Lua context and attaching helpers.
 //
+struct spinlock
+{
+    volatile long value = 0;
+    void lock()
+    {
+        KeEnterCriticalRegion();
+        while ( _interlockedbittestandset( &value, 0 ) )
+            _mm_pause();
+    }
+    void unlock()
+    {
+        _interlockedbittestandreset( &value, 0 );
+        KeLeaveCriticalRegion();
+    }
+};
+struct unique_lock 
+{ 
+    spinlock& lock;
+    unique_lock( spinlock& lock ) : lock( lock ) { lock.lock(); }
+    ~unique_lock() { lock.unlock(); }
+};
 lua_State* L = nullptr;
+spinlock LL = {};
 
 PEPROCESS attached_process = nullptr;
 KAPC_STATE apc_state;
@@ -70,22 +92,28 @@ namespace lua
     }
 };
 
-
-
 // Device control handler.
 //
 NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
 {
-    // If current control code is NTLUA_RUN:
+    PIO_STACK_LOCATION sp = IoGetCurrentIrpStackLocation( irp );
+
+    // Handle the command.
     //
-    PIO_STACK_LOCATION irp_sp = IoGetCurrentIrpStackLocation( irp );
-    if ( irp_sp->Parameters.DeviceIoControl.IoControlCode == NTLUA_RUN )
+    if ( sp->Parameters.DeviceIoControl.IoControlCode == NTLUA_RESET )
     {
+        unique_lock _g{ LL };
+        lua::destroy( L );
+        L = lua::init();
+    }
+    else if ( sp->Parameters.DeviceIoControl.IoControlCode == NTLUA_RUN )
+    {
+        unique_lock _g{ LL };
         const char* input = ( const char* ) irp->AssociatedIrp.SystemBuffer;
         ntlua_result* result = ( ntlua_result* ) irp->AssociatedIrp.SystemBuffer;
 
-        size_t input_length = irp_sp->Parameters.DeviceIoControl.InputBufferLength;
-        size_t output_length = irp_sp->Parameters.DeviceIoControl.OutputBufferLength;
+        size_t input_length = sp->Parameters.DeviceIoControl.InputBufferLength;
+        size_t output_length = sp->Parameters.DeviceIoControl.OutputBufferLength;
 
         // Begin output size at 0.
         //
@@ -113,11 +141,14 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
 
             // Declare a helper exporting the buffer from KM memory to UM memory.
             //
-            const auto export_buffer = [ ] ( logger::string_buffer& buf )
+            const auto export_buffer = [ ] ( logger::string_buffer& buf ) -> char*
             {
+                if ( !buf.iterator )
+                    return nullptr;
+
                 // Allocate user-mode memory to hold this buffer.
                 //
-                void* region = nullptr;
+                char* region = nullptr;
                 size_t size = buf.iterator + 1;
                 ZwAllocateVirtualMemory( NtCurrentProcess(), ( void** ) &region, 0, &size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
                 
@@ -139,7 +170,7 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
                 // Reset the buffer and return the newly allocated region.
                 //
                 buf.reset();
-                return ( char* ) region;
+                return region;
             };
 
             // If we have a valid output buffer:
@@ -153,12 +184,6 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
                 irp->IoStatus.Information = sizeof( ntlua_result );
             }
         }
-
-        // Declare success and return.
-        //
-        irp->IoStatus.Status = STATUS_SUCCESS;
-        IoCompleteRequest( irp, IO_NO_INCREMENT );
-        return STATUS_SUCCESS;
     }
     else
     {
@@ -168,6 +193,12 @@ NTSTATUS device_control( PDEVICE_OBJECT device_object, PIRP irp )
         IoCompleteRequest( irp, IO_NO_INCREMENT );
         return STATUS_UNSUCCESSFUL;
     }
+
+    // Declare success and return.
+    //
+    irp->IoStatus.Status = STATUS_SUCCESS;
+    IoCompleteRequest( irp, IO_NO_INCREMENT );
+    return STATUS_SUCCESS;
 }
 
 // Unloads the driver.
@@ -176,6 +207,7 @@ void unload_driver( PDRIVER_OBJECT driver )
 {
     // Destroy the Lua context.
     //
+    unique_lock _g{ LL };
     lua::destroy( L );
 
     // Delete the symbolic link.

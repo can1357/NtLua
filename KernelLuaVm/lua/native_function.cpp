@@ -1,21 +1,5 @@
 #include "native_function.hpp"
 
-// Helper function to invoke any function pointer.
-//
-template<size_t N = 16, typename... T>
-static uint64_t call_any( void* fn, uint64_t* args, size_t num_args, T... n )
-{
-    if constexpr ( N != 0 )
-    {
-        if ( num_args )
-            return call_any<N - 1>( fn, args + 1, num_args - 1, n..., *args );
-        else
-            return ( ( uint64_t( __stdcall* )( T... ) ) fn )( n... );
-    }
-    __debugbreak();
-    return 0;
-}
-
 // Allocator.
 //
 native_function* native_function::push( lua_State* L )
@@ -63,15 +47,20 @@ int native_function::invoke( lua_State* L )
     if ( n >= 16 )
         luaL_error( L, "Too many arguments provided %d vs maximum of 16\n", n );
 
-    // Create the call frame.
+    // Recursively create the call frame and call out.
     //
-    uint64_t* frame = ( uint64_t* ) ( n ? alloca( n * sizeof( void* ) ) : nullptr );
-    for ( int i = 0; i < n; i++ )
-        frame[ i ] = lua_asintrinsic( L, i + 2 );
-
-    // Invoke the call helper.
-    //
-    uint64_t result = call_any<>( fn->address, frame, n );
+    auto rec = [ & ] <typename... Tx> ( auto&& self, const void* fn, size_t i, Tx... args ) -> uint64_t
+    {
+        if constexpr ( sizeof...( Tx ) < 32 )
+        {
+            if ( i != n )
+                return self( self, fn, i + 1, args..., lua_asintrinsic( L, i + 2 ) );
+            else
+                return ( ( uint64_t( __stdcall* )( Tx... ) ) fn )( args... );
+        }
+        __assume( 0 );
+    };
+    uint64_t result = rec( rec, fn->address, 0, n );
 
     // Push the result and return.
     //

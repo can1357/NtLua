@@ -6,7 +6,7 @@
 struct native_function
 {
     static constexpr const char* export_name = "native_function";
-    void* address = 0;
+    const void* address = nullptr;
 
     // Allocator.
     //

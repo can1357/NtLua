@@ -20,3 +20,5 @@ x64/Release/
 LuaLib/x64/Release/
 
 LuaLib/x64/Debug/
+
+*.recipe

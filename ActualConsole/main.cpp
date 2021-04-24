@@ -3,23 +3,54 @@
 #include <iostream>
 #include <sstream>
 #include <tuple>
+#include <mutex>
 #include "../KernelLuaVm/driver_io.hpp"
+
+HANDLE device = CreateFileA
+(
+    "\\\\.\\NtLua",
+    GENERIC_READ | GENERIC_WRITE,
+    FILE_SHARE_READ | FILE_SHARE_WRITE,
+    NULL,
+    OPEN_EXISTING,
+    FILE_ATTRIBUTE_NORMAL,
+    NULL
+);
+
+void worker_thread()
+{
+    bool prev_success = false;
+    while ( 1 )
+    {
+        Sleep( prev_success ? 100 : 5000 );
+
+        ntlua_result result = { nullptr, nullptr };
+        char worker_script[] = R"(
+            if worker then 
+                worker() 
+                print("-")
+            end
+        )";
+
+        DWORD discarded = 0;
+        DeviceIoControl(
+            device,
+            NTLUA_RUN,
+            worker_script, sizeof( worker_script ),
+            &result, sizeof( result ),
+            &discarded, nullptr
+        );
+
+        if ( result.outputs ) VirtualFree( result.outputs, 0, MEM_RELEASE );
+        if ( result.errors ) VirtualFree( result.errors, 0, MEM_RELEASE );
+        prev_success = !result.outputs;
+    }
+}
 
 int main()
 {
-    // Create a handle to the device.
-    //
-    HANDLE device = CreateFileA
-    ( 
-        "\\\\.\\NtLua",
-        GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
-        NULL,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        NULL 
-    );
     if ( device == INVALID_HANDLE_VALUE ) return 1;
+    std::thread thr( &worker_thread );
 
     // Enter REPL:
     //
@@ -42,6 +73,8 @@ int main()
             buffer += "\n" + buffer2;
         }
 
+
+
         // Handle special commands:
         //
         if ( buffer == "clear" )
@@ -53,14 +86,22 @@ int main()
             return system( "cmd" );
         else if ( buffer == "exit" )
             return 0;
+        else if ( buffer == "reset" )
+        {
+            DWORD discarded = 0;
+            DeviceIoControl(
+                device,
+                NTLUA_RESET,
+                &buffer[ 0 ], buffer.size() + 1,
+                &discarded, sizeof( discarded ),
+                &discarded, nullptr
+            );
+            continue;
+        }
 
         // Send IOCTL.
         //
-        ntlua_result result = { 
-            nullptr, 
-            nullptr 
-        };
-
+        ntlua_result result = { nullptr, nullptr };
         DWORD discarded = 0;
         DeviceIoControl( 
             device,

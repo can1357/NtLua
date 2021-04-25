@@ -44,23 +44,23 @@ int native_function::invoke( lua_State* L )
     // Get number of arguments.
     //
     int n = lua_gettop( L ) - 1;
-    if ( n >= 16 )
+    if ( n >= 32 )
         luaL_error( L, "Too many arguments provided %d vs maximum of 16\n", n );
 
     // Recursively create the call frame and call out.
     //
     auto rec = [ & ] <typename... Tx> ( auto&& self, const void* fn, size_t i, Tx... args ) -> uint64_t
     {
-        if constexpr ( sizeof...( Tx ) < 32 )
+        if constexpr ( sizeof...( Tx ) <= 32 )
         {
-            if ( i != n )
-                return self( self, fn, i + 1, args..., lua_asintrinsic( L, i + 2 ) );
-            else
+            if ( i == n )
                 return ( ( uint64_t( __stdcall* )( Tx... ) ) fn )( args... );
+            else
+                return self( self, fn, i + 1, args..., lua_asintrinsic( L, i + 2 ) );
         }
         __assume( 0 );
     };
-    uint64_t result = rec( rec, fn->address, 0, n );
+    uint64_t result = rec( rec, fn->address, 0 );
 
     // Push the result and return.
     //

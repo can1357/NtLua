@@ -106,7 +106,8 @@ namespace lua
 
         // Reset the Lua stack.
         //
-        lua_settop( L, 0 );
+        if ( user_input )
+            lua_settop( L, 0 );
 
         // Guard against Lua panic.
         //

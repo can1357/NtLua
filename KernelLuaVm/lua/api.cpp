@@ -327,10 +327,10 @@ void lua::expose_api( lua_State* L )
     export_func( L, "lidt", lidt );
     export_func( L, "lgdt", lgdt );
     export_func( L, "lldt", lldt );
-    export_func( L, "sidt_b", sidt_b );
-    export_func( L, "sgdt_b", sgdt_b );
-    export_func( L, "sidt_l", sidt_l );
-    export_func( L, "sgdt_l", sgdt_l );
+    export_func( L, "sidtb", sidt_b );
+    export_func( L, "sgdtb", sgdt_b );
+    export_func( L, "sidtl", sidt_l );
+    export_func( L, "sgdtl", sgdt_l );
     export_func( L, "sldt", sldt );
     export_func( L, "invd", invd );
     export_func( L, "wbinvd", wbinvd );

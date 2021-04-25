@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <tuple>
 #include <mutex>
@@ -16,6 +17,37 @@ HANDLE device = CreateFileA
     FILE_ATTRIBUTE_NORMAL,
     NULL
 );
+bool execute( const char* str, bool silent )
+{
+    // Issue the IOCTL.
+    //
+    DWORD discarded = 0;
+    ntlua_result result = { nullptr, nullptr };
+    DeviceIoControl( device, NTLUA_RUN, ( void* ) str, strlen( str ) + 1, &result, sizeof( result ), &discarded, nullptr );
+    bool had_result = result.outputs != nullptr;
+
+    // If silent, free result and return.
+    //
+    if ( silent )
+    {
+        if ( result.outputs ) VirtualFree( result.outputs, 0, MEM_RELEASE );
+        if ( result.errors ) VirtualFree( result.errors, 0, MEM_RELEASE );
+    }
+    // Print each buffer to the console.
+    //
+    else
+    {
+        for ( auto& [buffer, color] : { std::pair{ result.errors, 12 },
+                                        std::pair{ result.outputs, 15 } } )
+        {
+            if ( !buffer ) continue;
+            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color );
+            puts( buffer );
+            VirtualFree( buffer, 0, MEM_RELEASE );
+        }
+    }
+    return had_result;
+}
 
 void worker_thread()
 {
@@ -23,33 +55,38 @@ void worker_thread()
     while ( 1 )
     {
         Sleep( prev_success ? 100 : 5000 );
-
-        ntlua_result result = { nullptr, nullptr };
-        char worker_script[] = R"(
+        static constexpr char worker_script[] = R"(
             if worker then 
                 worker() 
                 print("-")
             end
         )";
-
-        DWORD discarded = 0;
-        DeviceIoControl(
-            device,
-            NTLUA_RUN,
-            worker_script, sizeof( worker_script ),
-            &result, sizeof( result ),
-            &discarded, nullptr
-        );
-
-        if ( result.outputs ) VirtualFree( result.outputs, 0, MEM_RELEASE );
-        if ( result.errors ) VirtualFree( result.errors, 0, MEM_RELEASE );
-        prev_success = !result.outputs;
+        prev_success = execute( worker_script, true );
     }
 }
 
-int main()
+
+int main( int argc, const char** argv )
 {
     if ( device == INVALID_HANDLE_VALUE ) return 1;
+
+    // If any arguments are given, assume they're lua files and execute them.
+    //
+    if ( argc >= 2 )
+    {
+        for ( size_t n = 1; n != argc; n++ )
+        {
+            printf( "Running '%s'...\n", argv[ n ] );
+
+            std::ifstream fs( argv[ n ] );
+            std::string buffer{ std::istreambuf_iterator<char>( fs ), {} };
+            execute( buffer.data(), false );
+        }
+        return 0;
+    }
+
+    // Start the worker thread.
+    //
     std::thread thr( &worker_thread );
 
     // Enter REPL:
@@ -73,14 +110,11 @@ int main()
             buffer += "\n" + buffer2;
         }
 
-
-
         // Handle special commands:
         //
         if ( buffer == "clear" )
         {
             system( "cls" );
-            continue;
         }
         else if ( buffer == "cmd" )
             return system( "cmd" );
@@ -96,30 +130,10 @@ int main()
                 &discarded, sizeof( discarded ),
                 &discarded, nullptr
             );
-            continue;
         }
-
-        // Send IOCTL.
-        //
-        ntlua_result result = { nullptr, nullptr };
-        DWORD discarded = 0;
-        DeviceIoControl( 
-            device,
-            NTLUA_RUN,
-            &buffer[0], buffer.size() + 1,
-            &result, sizeof( result ),
-            &discarded, nullptr
-        );
-
-        // Print each buffer if relevant.
-        //
-        for ( auto& [buffer, color] : { std::pair{ result.errors, 12 }, 
-                                        std::pair{ result.outputs, 15 } } )
+        else
         {
-            if ( !buffer ) continue;
-            SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color );
-            puts( buffer );
-            VirtualFree( buffer, 0, MEM_RELEASE );
+            execute( buffer.data(), false );
         }
     }
 }

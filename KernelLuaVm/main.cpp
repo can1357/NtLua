@@ -1,10 +1,13 @@
 #include "crt/crt.h"
 #include <ntifs.h>
+#include <intrin.h>
 #include "logger.hpp"
 #include "lua/state.hpp"
 #include "lua/native_function.hpp"
 #include "driver_io.hpp"
 #include "lua/api.hpp"
+
+#pragma intrinsic(_enable)
 
 // Global Lua context and attaching helpers.
 //
@@ -56,6 +59,8 @@ namespace lua
     {
         if ( attached_process )
             KeUnstackDetachProcess( &apc_state );
+        __writecr8( 0 );
+        _enable();
     }
 
     bool detach()

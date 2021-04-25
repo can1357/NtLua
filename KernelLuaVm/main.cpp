@@ -57,10 +57,10 @@ namespace lua
     }
     static void end_ctx()
     {
-        if ( attached_process )
-            KeUnstackDetachProcess( &apc_state );
         __writecr8( 0 );
         _enable();
+        if ( attached_process )
+            KeUnstackDetachProcess( &apc_state );
     }
 
     bool detach()

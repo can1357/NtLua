@@ -117,9 +117,13 @@ int main( int argc, const char** argv )
             system( "cls" );
         }
         else if ( buffer == "cmd" )
+        {
             return system( "cmd" );
+        }
         else if ( buffer == "exit" )
-            return 0;
+        {
+            return exit( 0 );
+        }
         else if ( buffer == "reset" )
         {
             DWORD discarded = 0;

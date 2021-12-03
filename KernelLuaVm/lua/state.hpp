@@ -3,12 +3,10 @@
 #include <ntifs.h>
 #include "../logger.hpp"
 
-extern "C"
-{
-    #include <lua.h>
-    #include <lauxlib.h>
-    #include <lualib.h>
-};
+// Build lua as cpp 
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
 
 namespace lua
 {
